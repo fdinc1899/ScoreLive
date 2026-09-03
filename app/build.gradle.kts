@@ -1,3 +1,4 @@
+İmport Java. util. Properties 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -23,7 +24,7 @@ android {
         // API key is read from local.properties -> injected as BuildConfig field.
         // Never hard-coded. See Stage 6 for real usage; empty by default so the
         // project builds out-of-the-box using MockSportsRepository.
-        val localProperties = java.util.Properties()
+        val localProperties = Properties()
         val localPropertiesFile = rootProject.file("local.properties")
         if (localPropertiesFile.exists()) {
             localProperties.load(localPropertiesFile.inputStream())
