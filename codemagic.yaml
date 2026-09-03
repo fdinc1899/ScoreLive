@@ -1,0 +1,32 @@
+workflows:
+  android-debug:
+    name: ScoreLive Debug APK
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      groups:
+        - scorelive_keys   # optional: define SPORTS_API_KEY here later in Codemagic UI
+      vars:
+        PACKAGE_NAME: "com.scorelive.app"
+      java: 17
+    scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          # If SPORTS_API_KEY is defined as an env var in Codemagic, inject it:
+          echo "SPORTS_API_KEY=${SPORTS_API_KEY:-}" >> local.properties
+          echo "SPORTS_API_BASE_URL=${SPORTS_API_BASE_URL:-https://api.example.com/}" >> local.properties
+      - name: Generate Gradle wrapper
+        script: |
+          # Repo ships without the binary gradle-wrapper.jar (kept out of git
+          # history intentionally); Codemagic images have Gradle preinstalled,
+          # so we regenerate the wrapper here before building.
+          gradle wrapper --gradle-version 8.9
+      - name: Build debug APK
+        script: |
+          ./gradlew assembleDebug --stacktrace
+    artifacts:
+      - app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients: []

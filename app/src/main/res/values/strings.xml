@@ -1,0 +1,6 @@
+<resources>
+    <!-- Single source of truth for the app's display name.
+         Change ONLY this value to rebrand the app; also mirrored in
+         AppConfig.kt for use in non-resource (Kotlin) contexts. -->
+    <string name="app_name">ScoreLive</string>
+</resources>

@@ -1,0 +1,9 @@
+# Copy this file to "local.properties" (already gitignored) and fill in real values.
+# local.properties is never committed to source control.
+
+sdk.dir=/path/to/your/Android/sdk
+
+# Sports API credentials - required for Stage 6 (real API integration).
+# Until this is set, the app runs entirely on MockSportsRepository.
+SPORTS_API_KEY=
+SPORTS_API_BASE_URL=https://api.example.com/
