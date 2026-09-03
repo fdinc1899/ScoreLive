@@ -6,8 +6,8 @@ plugins {
     id("com.google.devtools.ksp")
     
     id("org.jetbrains.kotlin.plugin.serialization")
-}
-
+id("org.jetbrains.kotlin.plugin.compose")
+} 
 android {
     namespace = "com.scorelive.app"
     compileSdk = 35
@@ -59,8 +59,7 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
+    
     }
 
     compileOptions {
