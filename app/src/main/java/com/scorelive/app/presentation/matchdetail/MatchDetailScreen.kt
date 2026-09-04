@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.scorelive.app.domain.model.Match
 import com.scorelive.app.domain.model.MatchStatus
+import com.scorelive.app.domain.model.Sport
 import com.scorelive.app.ui.components.EmptyView
 import com.scorelive.app.ui.components.LoadingView
 import com.scorelive.app.ui.components.ScoreDisplay
+import com.scorelive.app.ui.components.StatRow
 import com.scorelive.app.ui.components.TeamLogo
 import java.time.format.DateTimeFormatter
 
@@ -124,7 +126,19 @@ private fun MatchDetailContent(match: Match) {
         }
 
         when (selectedTab) {
-            0 -> EmptyView(message = "Bu mac icin ozet bilgisi henuz eklenmedi.", modifier = Modifier.fillMaxSize())
+            0 -> {
+                val quarters = match.quarterScores
+                if (match.sport == Sport.BASKETBALL && !quarters.isNullOrEmpty()) {
+                    Column(modifier = Modifier.fillMaxSize().padding(top = 8.dp)) {
+                        StatRow(label = "Ceyrek", homeValue = match.homeTeam.shortName, awayValue = match.awayTeam.shortName)
+                        quarters.forEach { q ->
+                            StatRow(label = q.label, homeValue = q.homeScore.toString(), awayValue = q.awayScore.toString())
+                        }
+                    }
+                } else {
+                    EmptyView(message = "Bu mac icin ozet bilgisi henuz eklenmedi.", modifier = Modifier.fillMaxSize())
+                }
+            }
             1 -> EmptyView(message = "Canli olaylar Asama 8'de eklenecek.", modifier = Modifier.fillMaxSize())
             2 -> EmptyView(message = "Istatistikler Asama 9'da eklenecek.", modifier = Modifier.fillMaxSize())
             3 -> EmptyView(message = "Kadro bilgisi Asama 12-13'te eklenecek.", modifier = Modifier.fillMaxSize())

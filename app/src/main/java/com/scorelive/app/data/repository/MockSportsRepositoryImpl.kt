@@ -3,6 +3,7 @@ package com.scorelive.app.data.repository
 import com.scorelive.app.domain.model.League
 import com.scorelive.app.domain.model.Match
 import com.scorelive.app.domain.model.MatchStatus
+import com.scorelive.app.domain.model.QuarterScore
 import com.scorelive.app.domain.model.Sport
 import com.scorelive.app.domain.model.Team
 import com.scorelive.app.domain.repository.SportsRepository
@@ -18,6 +19,7 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
 
     private val superLig = League("tr-superlig", "Trendyol Super Lig", "Turkiye", "\ud83c\uddf9\ud83c\uddf7")
     private val premierLeague = League("en-premier", "Premier League", "Ingiltere", "\ud83c\udff4")
+    private val nba = League("nba", "NBA", "ABD", "\ud83c\uddfa\ud83c\uddf8")
 
     private fun team(id: String, name: String, shortName: String) = Team(id, name, shortName)
 
@@ -31,12 +33,17 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
     private val liverpool = team("t8", "Liverpool", "LIV")
     private val arsenal = team("t9", "Arsenal", "ARS")
     private val chelsea = team("t10", "Chelsea", "CHE")
+    private val lakers = team("b1", "Lakers", "LAL")
+    private val celtics = team("b2", "Celtics", "BOS")
+    private val warriors = team("b3", "Warriors", "GSW")
+    private val bulls = team("b4", "Bulls", "CHI")
 
-    private fun buildMockMatches(): List<Match> {
+    private fun buildFootballMatches(): List<Match> {
         val today = LocalDate.now()
         return listOf(
             Match(
                 id = "m1",
+                sport = Sport.FOOTBALL,
                 league = superLig,
                 homeTeam = basaksehir,
                 awayTeam = galatasaray,
@@ -48,6 +55,7 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
             ),
             Match(
                 id = "m2",
+                sport = Sport.FOOTBALL,
                 league = superLig,
                 homeTeam = fenerbahce,
                 awayTeam = trabzonspor,
@@ -58,6 +66,7 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
             ),
             Match(
                 id = "m3",
+                sport = Sport.FOOTBALL,
                 league = superLig,
                 homeTeam = besiktas,
                 awayTeam = antalyaspor,
@@ -68,6 +77,7 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
             ),
             Match(
                 id = "m4",
+                sport = Sport.FOOTBALL,
                 league = premierLeague,
                 homeTeam = manCity,
                 awayTeam = liverpool,
@@ -79,6 +89,7 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
             ),
             Match(
                 id = "m5",
+                sport = Sport.FOOTBALL,
                 league = premierLeague,
                 homeTeam = arsenal,
                 awayTeam = chelsea,
@@ -90,15 +101,57 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
         )
     }
 
+    private fun buildBasketballMatches(): List<Match> {
+        val today = LocalDate.now()
+        return listOf(
+            Match(
+                id = "b1",
+                sport = Sport.BASKETBALL,
+                league = nba,
+                homeTeam = lakers,
+                awayTeam = celtics,
+                homeScore = 102,
+                awayScore = 98,
+                status = MatchStatus.LIVE,
+                kickoff = today.atTime(20, 0),
+                liveMinute = "4. Ceyrek - 05:32",
+                quarterScores = listOf(
+                    QuarterScore("1. Ceyrek", 24, 20),
+                    QuarterScore("2. Ceyrek", 26, 24),
+                    QuarterScore("3. Ceyrek", 28, 26),
+                    QuarterScore("4. Ceyrek", 24, 28),
+                ),
+            ),
+            Match(
+                id = "b2",
+                sport = Sport.BASKETBALL,
+                league = nba,
+                homeTeam = warriors,
+                awayTeam = bulls,
+                homeScore = null,
+                awayScore = null,
+                status = MatchStatus.NOT_STARTED,
+                kickoff = today.atTime(21, 0),
+            ),
+        )
+    }
+
+    private fun buildAllMatches(): List<Match> = buildFootballMatches() + buildBasketballMatches()
+
     override suspend fun getMatches(sport: Sport, date: LocalDate): Result<List<Match>> {
-        if (sport != Sport.FOOTBALL || date != LocalDate.now()) {
+        if (date != LocalDate.now()) {
             return Result.success(emptyList())
         }
-        return Result.success(buildMockMatches())
+        val matches = when (sport) {
+            Sport.FOOTBALL -> buildFootballMatches()
+            Sport.BASKETBALL -> buildBasketballMatches()
+            else -> emptyList()
+        }
+        return Result.success(matches)
     }
 
     override suspend fun getMatchDetails(matchId: String): Result<Match> {
-        val match = buildMockMatches().find { it.id == matchId }
+        val match = buildAllMatches().find { it.id == matchId }
         return if (match != null) {
             Result.success(match)
         } else {

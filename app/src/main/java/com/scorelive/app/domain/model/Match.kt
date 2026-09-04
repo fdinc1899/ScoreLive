@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 
 data class Match(
     val id: String,
+    val sport: Sport,
     val league: League,
     val homeTeam: Team,
     val awayTeam: Team,
@@ -12,5 +13,6 @@ data class Match(
     val status: MatchStatus,
     val kickoff: LocalDateTime,
     val liveMinute: String? = null,
+    val quarterScores: List<QuarterScore>? = null,
     val isFavorite: Boolean = false,
 )
