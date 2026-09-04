@@ -100,9 +100,9 @@ fun HomeScreen(
                         }
                         items(matches, key = { it.id }) { match ->
                             MatchCard(
-                                match = match,
+                                match = match.copy(isFavorite = match.id in uiState.favoriteMatchIds),
                                 onClick = { onMatchClick(match.id) },
-                                onFavoriteToggle = { },
+                                onFavoriteToggle = { viewModel.onFavoriteToggle(match) },
                             )
                         }
                     }

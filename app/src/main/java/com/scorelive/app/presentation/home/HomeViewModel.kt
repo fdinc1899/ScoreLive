@@ -2,8 +2,11 @@ package com.scorelive.app.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.scorelive.app.domain.model.Favorite
+import com.scorelive.app.domain.model.FavoriteType
 import com.scorelive.app.domain.model.Match
 import com.scorelive.app.domain.model.Sport
+import com.scorelive.app.domain.repository.FavoritesRepository
 import com.scorelive.app.domain.repository.SportsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +20,7 @@ data class HomeUiState(
     val selectedSport: Sport = Sport.FOOTBALL,
     val selectedDate: LocalDate = LocalDate.now(),
     val matches: List<Match> = emptyList(),
+    val favoriteMatchIds: Set<String> = emptySet(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
 )
@@ -24,6 +28,7 @@ data class HomeUiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val sportsRepository: SportsRepository,
+    private val favoritesRepository: FavoritesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -31,6 +36,11 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadMatches()
+        viewModelScope.launch {
+            favoritesRepository.observeFavoriteIds(FavoriteType.MATCH).collect { ids ->
+                _uiState.value = _uiState.value.copy(favoriteMatchIds = ids)
+            }
+        }
     }
 
     fun onSportSelected(sport: Sport) {
@@ -41,6 +51,18 @@ class HomeViewModel @Inject constructor(
     fun onDateSelected(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
         loadMatches()
+    }
+
+    fun onFavoriteToggle(match: Match) {
+        viewModelScope.launch {
+            favoritesRepository.toggle(
+                Favorite(
+                    type = FavoriteType.MATCH,
+                    targetId = match.id,
+                    label = match.homeTeam.name + " - " + match.awayTeam.name,
+                )
+            )
+        }
     }
 
     fun retry() {

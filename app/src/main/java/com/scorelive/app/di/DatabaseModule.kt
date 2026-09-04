@@ -2,6 +2,7 @@ package com.scorelive.app.di
 
 import android.content.Context
 import androidx.room.Room
+import com.scorelive.app.data.database.FavoriteDao
 import com.scorelive.app.data.database.MatchDao
 import com.scorelive.app.data.database.ScoreLiveDatabase
 import dagger.Module
@@ -25,4 +26,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideMatchDao(database: ScoreLiveDatabase): MatchDao = database.matchDao()
+
+    @Provides
+    @Singleton
+    fun provideFavoriteDao(database: ScoreLiveDatabase): FavoriteDao = database.favoriteDao()
 }
