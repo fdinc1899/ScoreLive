@@ -1,3 +1,7 @@
+set -e
+cd ~/ScoreLive
+
+cat > app/build.gradle.kts << 'GRADLE_EOF'
 import java.util.Properties
 
 plugins {
@@ -123,3 +127,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+GRADLE_EOF
+
+echo "--- build.gradle.kts yeniden yazildi ---"
+head -40 app/build.gradle.kts
+
+git add .
+git commit -m "Fix: rewrite app build.gradle.kts cleanly with API config fields"
+git push
+echo "TAMAMLANDI"
