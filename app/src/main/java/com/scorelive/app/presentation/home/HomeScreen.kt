@@ -35,7 +35,10 @@ import com.scorelive.app.ui.components.MatchCard
 import com.scorelive.app.ui.components.SportSelector
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    onMatchClick: (String) -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -94,7 +97,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                         items(matches, key = { it.id }) { match ->
                             MatchCard(
                                 match = match,
-                                onClick = { },
+                                onClick = { onMatchClick(match.id) },
                                 onFavoriteToggle = { },
                             )
                         }

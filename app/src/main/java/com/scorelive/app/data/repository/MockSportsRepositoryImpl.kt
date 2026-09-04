@@ -32,67 +32,77 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
     private val arsenal = team("t9", "Arsenal", "ARS")
     private val chelsea = team("t10", "Chelsea", "CHE")
 
+    private fun buildMockMatches(): List<Match> {
+        val today = LocalDate.now()
+        return listOf(
+            Match(
+                id = "m1",
+                league = superLig,
+                homeTeam = basaksehir,
+                awayTeam = galatasaray,
+                homeScore = 1,
+                awayScore = 2,
+                status = MatchStatus.LIVE,
+                kickoff = today.atTime(19, 0),
+                liveMinute = "67'",
+            ),
+            Match(
+                id = "m2",
+                league = superLig,
+                homeTeam = fenerbahce,
+                awayTeam = trabzonspor,
+                homeScore = null,
+                awayScore = null,
+                status = MatchStatus.NOT_STARTED,
+                kickoff = today.atTime(20, 0),
+            ),
+            Match(
+                id = "m3",
+                league = superLig,
+                homeTeam = besiktas,
+                awayTeam = antalyaspor,
+                homeScore = 3,
+                awayScore = 1,
+                status = MatchStatus.FINISHED,
+                kickoff = today.atTime(17, 0),
+            ),
+            Match(
+                id = "m4",
+                league = premierLeague,
+                homeTeam = manCity,
+                awayTeam = liverpool,
+                homeScore = 0,
+                awayScore = 0,
+                status = MatchStatus.LIVE,
+                kickoff = today.atTime(19, 30),
+                liveMinute = "34'",
+            ),
+            Match(
+                id = "m5",
+                league = premierLeague,
+                homeTeam = arsenal,
+                awayTeam = chelsea,
+                homeScore = null,
+                awayScore = null,
+                status = MatchStatus.NOT_STARTED,
+                kickoff = today.atTime(22, 0),
+            ),
+        )
+    }
+
     override suspend fun getMatches(sport: Sport, date: LocalDate): Result<List<Match>> {
         if (sport != Sport.FOOTBALL || date != LocalDate.now()) {
             return Result.success(emptyList())
         }
+        return Result.success(buildMockMatches())
+    }
 
-        val today = LocalDate.now()
-        return Result.success(
-            listOf(
-                Match(
-                    id = "m1",
-                    league = superLig,
-                    homeTeam = basaksehir,
-                    awayTeam = galatasaray,
-                    homeScore = 1,
-                    awayScore = 2,
-                    status = MatchStatus.LIVE,
-                    kickoff = today.atTime(19, 0),
-                    liveMinute = "67'",
-                ),
-                Match(
-                    id = "m2",
-                    league = superLig,
-                    homeTeam = fenerbahce,
-                    awayTeam = trabzonspor,
-                    homeScore = null,
-                    awayScore = null,
-                    status = MatchStatus.NOT_STARTED,
-                    kickoff = today.atTime(20, 0),
-                ),
-                Match(
-                    id = "m3",
-                    league = superLig,
-                    homeTeam = besiktas,
-                    awayTeam = antalyaspor,
-                    homeScore = 3,
-                    awayScore = 1,
-                    status = MatchStatus.FINISHED,
-                    kickoff = today.atTime(17, 0),
-                ),
-                Match(
-                    id = "m4",
-                    league = premierLeague,
-                    homeTeam = manCity,
-                    awayTeam = liverpool,
-                    homeScore = 0,
-                    awayScore = 0,
-                    status = MatchStatus.LIVE,
-                    kickoff = today.atTime(19, 30),
-                    liveMinute = "34'",
-                ),
-                Match(
-                    id = "m5",
-                    league = premierLeague,
-                    homeTeam = arsenal,
-                    awayTeam = chelsea,
-                    homeScore = null,
-                    awayScore = null,
-                    status = MatchStatus.NOT_STARTED,
-                    kickoff = today.atTime(22, 0),
-                ),
-            )
-        )
+    override suspend fun getMatchDetails(matchId: String): Result<Match> {
+        val match = buildMockMatches().find { it.id == matchId }
+        return if (match != null) {
+            Result.success(match)
+        } else {
+            Result.failure(NoSuchElementException("Mac bulunamadi."))
+        }
     }
 }

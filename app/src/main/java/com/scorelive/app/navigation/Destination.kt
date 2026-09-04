@@ -19,3 +19,9 @@ sealed class Destination(val route: String, val label: String, val icon: ImageVe
         val bottomNavItems = listOf(Home, Live, Favorites, Search, Settings)
     }
 }
+
+object MatchDetailRoutes {
+    const val ARG_MATCH_ID = "matchId"
+    const val ROUTE_PATTERN = "match_detail/{$ARG_MATCH_ID}"
+    fun route(matchId: String) = "match_detail/$matchId"
+}

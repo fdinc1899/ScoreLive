@@ -6,4 +6,5 @@ import java.time.LocalDate
 
 interface SportsRepository {
     suspend fun getMatches(sport: Sport, date: LocalDate): Result<List<Match>>
+    suspend fun getMatchDetails(matchId: String): Result<Match>
 }
