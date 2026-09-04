@@ -6,13 +6,14 @@ import retrofit2.http.Query
 interface SportsApi {
 
     /**
-     * Fixtures for a given date (yyyy-MM-dd). Endpoint path is intentionally
-     * relative so a different provider can be swapped in by changing only the
-     * base URL in local.properties.
+     * @param category soccer | basketball | tennis | hockey | cricket
+     * @param date yyyyMMdd
+     * @param timezone hours offset from UTC (Turkey = 3)
      */
-    @GET("fixtures")
-    suspend fun getFixturesByDate(
-        @Query("date") date: String,
-        @Query("timezone") timezone: String = "Europe/Istanbul",
-    ): FixturesResponseDto
+    @GET("matches/v2/list-by-date")
+    suspend fun getMatchesByDate(
+        @Query("Category") category: String,
+        @Query("Date") date: String,
+        @Query("Timezone") timezone: Int = 3,
+    ): MatchesResponseDto
 }
