@@ -22,4 +22,11 @@ interface SportsApi {
         @Query("Category") category: String,
         @Query("Timezone") timezone: Int = 3,
     ): MatchesResponseDto
+
+    /** League table for the competition a given fixture belongs to. */
+    @GET("matches/v2/get-table")
+    suspend fun getTable(
+        @Query("Category") category: String,
+        @Query("Eid") eventId: String,
+    ): TableResponseDto
 }

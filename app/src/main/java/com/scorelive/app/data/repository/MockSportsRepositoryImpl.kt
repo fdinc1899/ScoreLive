@@ -5,6 +5,7 @@ import com.scorelive.app.domain.model.Match
 import com.scorelive.app.domain.model.MatchStatus
 import com.scorelive.app.domain.model.QuarterScore
 import com.scorelive.app.domain.model.Sport
+import com.scorelive.app.domain.model.StandingRow
 import com.scorelive.app.domain.model.Team
 import com.scorelive.app.domain.repository.SportsRepository
 import java.time.LocalDate
@@ -179,4 +180,7 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
             }
         )
     }
+
+    override suspend fun getStandings(matchId: String, sport: Sport): Result<List<StandingRow>> =
+        Result.success(emptyList())
 }

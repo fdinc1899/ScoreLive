@@ -5,9 +5,11 @@ import com.scorelive.app.data.database.MatchDao
 import com.scorelive.app.data.database.toDomain
 import com.scorelive.app.data.database.toEntity
 import com.scorelive.app.data.mapper.toMatches
+import com.scorelive.app.data.mapper.toStandings
 import com.scorelive.app.domain.model.Match
 import com.scorelive.app.domain.model.MatchStatus
 import com.scorelive.app.domain.model.Sport
+import com.scorelive.app.domain.model.StandingRow
 import com.scorelive.app.domain.repository.SportsRepository
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -104,6 +106,16 @@ class RemoteSportsRepositoryImpl @Inject constructor(
                     match.league.name.lowercase().contains(needle) ||
                     match.league.country.lowercase().contains(needle)
             }
+        }
+    }
+
+    override suspend fun getStandings(matchId: String, sport: Sport): Result<List<StandingRow>> {
+        val category = categoryFor(sport) ?: return Result.success(emptyList())
+        return try {
+            val response = api.getTable(category = category, eventId = matchId)
+            Result.success(response.toStandings())
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

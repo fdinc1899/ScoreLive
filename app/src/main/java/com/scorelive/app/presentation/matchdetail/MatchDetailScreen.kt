@@ -19,6 +19,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,6 +36,7 @@ import com.scorelive.app.domain.model.Sport
 import com.scorelive.app.ui.components.EmptyView
 import com.scorelive.app.ui.components.LoadingView
 import com.scorelive.app.ui.components.ScoreDisplay
+import com.scorelive.app.ui.components.StandingsTable
 import com.scorelive.app.ui.components.StatRow
 import com.scorelive.app.ui.components.TeamLogo
 import java.time.format.DateTimeFormatter
@@ -63,13 +65,21 @@ fun MatchDetailScreen(
         when {
             uiState.isLoading -> LoadingView(modifier = Modifier.fillMaxSize())
             match == null -> EmptyView(message = uiState.errorMessage ?: "Mac bulunamadi.")
-            else -> MatchDetailContent(match)
+            else -> MatchDetailContent(
+                match = match,
+                uiState = uiState,
+                onStandingsTabOpened = viewModel::loadStandingsIfNeeded,
+            )
         }
     }
 }
 
 @Composable
-private fun MatchDetailContent(match: Match) {
+private fun MatchDetailContent(
+    match: Match,
+    uiState: MatchDetailUiState,
+    onStandingsTabOpened: () -> Unit,
+) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     val isLive = match.status == MatchStatus.LIVE || match.status == MatchStatus.HALF_TIME
@@ -142,7 +152,21 @@ private fun MatchDetailContent(match: Match) {
             1 -> EmptyView(message = "Canli olaylar Asama 8'de eklenecek.", modifier = Modifier.fillMaxSize())
             2 -> EmptyView(message = "Istatistikler Asama 9'da eklenecek.", modifier = Modifier.fillMaxSize())
             3 -> EmptyView(message = "Kadro bilgisi Asama 12-13'te eklenecek.", modifier = Modifier.fillMaxSize())
-            4 -> EmptyView(message = "Puan durumu Asama 11'de eklenecek.", modifier = Modifier.fillMaxSize())
+            4 -> {
+                LaunchedEffect(Unit) { onStandingsTabOpened() }
+                when {
+                    uiState.isLoadingStandings -> LoadingView(modifier = Modifier.fillMaxSize())
+                    uiState.standingsError != null -> EmptyView(
+                        message = uiState.standingsError ?: "Puan durumu yuklenemedi.",
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    uiState.standings.isEmpty() -> EmptyView(
+                        message = "Bu mac icin puan durumu bulunamadi.",
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    else -> StandingsTable(rows = uiState.standings)
+                }
+            }
         }
     }
 }
