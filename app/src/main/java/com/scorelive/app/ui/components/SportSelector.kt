@@ -9,14 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
-enum class Sport(val emoji: String, val label: String) {
-    FOOTBALL("\u26bd", "Futbol"),
-    BASKETBALL("\ud83c\udfc0", "Basketbol"),
-    TENNIS("\ud83c\udfbe", "Tenis"),
-    VOLLEYBALL("\ud83c\udfd0", "Voleybol"),
-    MOTORSPORT("\ud83c\udfce", "Motor Sporlari"),
-}
+import com.scorelive.app.domain.model.Sport
 
 @Composable
 fun SportSelector(
