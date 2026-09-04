@@ -15,15 +15,15 @@ import com.scorelive.app.presentation.settings.SettingsScreen
 
 @Composable
 fun ScoreLiveNavHost(navController: NavHostController) {
+    val openMatch: (String) -> Unit = { matchId ->
+        navController.navigate(MatchDetailRoutes.route(matchId))
+    }
+
     NavHost(navController = navController, startDestination = Destination.Home.route) {
-        composable(Destination.Home.route) {
-            HomeScreen(onMatchClick = { matchId ->
-                navController.navigate(MatchDetailRoutes.route(matchId))
-            })
-        }
-        composable(Destination.Live.route) { LiveScreen() }
+        composable(Destination.Home.route) { HomeScreen(onMatchClick = openMatch) }
+        composable(Destination.Live.route) { LiveScreen(onMatchClick = openMatch) }
         composable(Destination.Favorites.route) { FavoritesScreen() }
-        composable(Destination.Search.route) { SearchScreen() }
+        composable(Destination.Search.route) { SearchScreen(onMatchClick = openMatch) }
         composable(Destination.Settings.route) { SettingsScreen() }
         composable(
             route = MatchDetailRoutes.ROUTE_PATTERN,

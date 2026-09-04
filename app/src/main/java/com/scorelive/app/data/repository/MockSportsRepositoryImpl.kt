@@ -158,4 +158,25 @@ class MockSportsRepositoryImpl @Inject constructor() : SportsRepository {
             Result.failure(NoSuchElementException("Mac bulunamadi."))
         }
     }
+
+    override suspend fun getLiveMatches(sport: Sport): Result<List<Match>> {
+        val live = buildAllMatches().filter {
+            it.sport == sport && it.status == MatchStatus.LIVE
+        }
+        return Result.success(live)
+    }
+
+    override suspend fun search(query: String, sport: Sport): Result<List<Match>> {
+        if (query.isBlank()) return Result.success(emptyList())
+        val needle = query.trim().lowercase()
+        return Result.success(
+            buildAllMatches().filter { match ->
+                match.sport == sport && (
+                    match.homeTeam.name.lowercase().contains(needle) ||
+                        match.awayTeam.name.lowercase().contains(needle) ||
+                        match.league.name.lowercase().contains(needle)
+                    )
+            }
+        )
+    }
 }

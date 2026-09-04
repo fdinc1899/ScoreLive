@@ -6,6 +6,7 @@ import com.scorelive.app.data.database.toDomain
 import com.scorelive.app.data.database.toEntity
 import com.scorelive.app.data.mapper.toMatches
 import com.scorelive.app.domain.model.Match
+import com.scorelive.app.domain.model.MatchStatus
 import com.scorelive.app.domain.model.Sport
 import com.scorelive.app.domain.repository.SportsRepository
 import java.time.LocalDate
@@ -68,6 +69,16 @@ class RemoteSportsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getLiveMatches(sport: Sport): Result<List<Match>> {
+        val category = categoryFor(sport) ?: return Result.success(emptyList())
+        return try {
+            val response = api.getLiveMatches(category = category)
+            Result.success(response.stages.orEmpty().flatMap { it.toMatches(sport) })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun getMatchDetails(matchId: String): Result<Match> {
         val cached = matchDao.getMatchById(matchId)
         return if (cached != null) {
@@ -75,6 +86,24 @@ class RemoteSportsRepositoryImpl @Inject constructor(
             Result.success(cached.toDomain(treatLiveAsStale = isStale))
         } else {
             Result.failure(NoSuchElementException("Mac bulunamadi."))
+        }
+    }
+
+    /**
+     * The provider has no free-text search endpoint on this plan, so search
+     * filters today's fixtures locally. This costs one request and keeps the
+     * behaviour predictable within the 500/month budget.
+     */
+    override suspend fun search(query: String, sport: Sport): Result<List<Match>> {
+        if (query.isBlank()) return Result.success(emptyList())
+        return getMatches(sport, LocalDate.now()).map { matches ->
+            val needle = query.trim().lowercase()
+            matches.filter { match ->
+                match.homeTeam.name.lowercase().contains(needle) ||
+                    match.awayTeam.name.lowercase().contains(needle) ||
+                    match.league.name.lowercase().contains(needle) ||
+                    match.league.country.lowercase().contains(needle)
+            }
         }
     }
 }

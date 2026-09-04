@@ -16,4 +16,10 @@ interface SportsApi {
         @Query("Date") date: String,
         @Query("Timezone") timezone: Int = 3,
     ): MatchesResponseDto
+
+    @GET("matches/v2/list-live")
+    suspend fun getLiveMatches(
+        @Query("Category") category: String,
+        @Query("Timezone") timezone: Int = 3,
+    ): MatchesResponseDto
 }
