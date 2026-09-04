@@ -14,8 +14,9 @@ workflows:
         script: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
           # If SPORTS_API_KEY is defined as an env var in Codemagic, inject it:
-          echo "SPORTS_API_KEY=${SPORTS_API_KEY:-}" >> local.properties
-          echo "SPORTS_API_BASE_URL=${SPORTS_API_BASE_URL:-https://api.example.com/}" >> local.properties
+          echo "SPORTS_API_KEY=${SPORTS_API_KEY:-c66a5280a7msh44574b92ec5736dp135db5jsna7fd41ed65f6}" >> local.properties
+          echo "SPORTS_API_BASE_URL=${SPORTS_API_BASE_URL:-https://api-football186.p.rapidapi.com/}" >> local.properties
+          echo "SPORTS_API_HOST=${SPORTS_API_HOST:-api-football186.p.rapidapi.com}" >> local.properties
       - name: Generate Gradle wrapper
         script: |
           # Repo ships without the binary gradle-wrapper.jar (kept out of git

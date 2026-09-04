@@ -43,6 +43,10 @@ class HomeViewModel @Inject constructor(
         loadMatches()
     }
 
+    fun retry() {
+        loadMatches()
+    }
+
     private fun loadMatches() {
         val sport = _uiState.value.selectedSport
         val date = _uiState.value.selectedDate

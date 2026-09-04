@@ -34,6 +34,11 @@ android {
         )
         buildConfigField(
             "String",
+            "SPORTS_API_HOST",
+            "\\"${localProperties.getProperty("SPORTS_API_HOST", "")}\\""
+        )
+        buildConfigField(
+            "String",
             "SPORTS_API_BASE_URL",
             "\"${localProperties.getProperty("SPORTS_API_BASE_URL", "https://api.example.com/")}\""
         )

@@ -29,6 +29,7 @@ import com.scorelive.app.domain.model.League
 import com.scorelive.app.domain.model.Match
 import com.scorelive.app.ui.components.DateSelector
 import com.scorelive.app.ui.components.EmptyView
+import com.scorelive.app.ui.components.ErrorView
 import com.scorelive.app.ui.components.LeagueHeader
 import com.scorelive.app.ui.components.LoadingView
 import com.scorelive.app.ui.components.MatchCard
@@ -81,7 +82,10 @@ fun HomeScreen(
 
         when {
             uiState.isLoading -> LoadingView(modifier = Modifier.fillMaxSize())
-            uiState.errorMessage != null -> EmptyView(message = uiState.errorMessage ?: "Veriler yuklenemedi.")
+            uiState.errorMessage != null -> ErrorView(
+                message = uiState.errorMessage ?: "Veriler yuklenemedi.",
+                onRetry = viewModel::retry,
+            )
             uiState.matches.isEmpty() -> EmptyView(message = "Bu tarihte mac bulunamadi.")
             else -> {
                 val grouped: Map<League, List<Match>> = uiState.matches.groupBy { it.league }
