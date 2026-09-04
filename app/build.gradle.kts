@@ -32,10 +32,12 @@ android {
             "SPORTS_API_KEY",
             "\"${localProperties.getProperty("SPORTS_API_KEY", "")}\""
         )
+}\\""
+        )
         buildConfigField(
             "String",
             "SPORTS_API_HOST",
-            "\\"${localProperties.getProperty("SPORTS_API_HOST", "")}\\""
+            "\"${localProperties.getProperty("SPORTS_API_HOST", "")}\""
         )
         buildConfigField(
             "String",
